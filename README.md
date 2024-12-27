@@ -1,4 +1,4 @@
-# tap_aggs
+# tap_egg
 
 A new Flutter project.
 
