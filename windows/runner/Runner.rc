@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "tap_aggs" "\0"
+            VALUE "FileDescription", "tap_egg" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tap_aggs" "\0"
+            VALUE "InternalName", "tap_egg" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "tap_aggs.exe" "\0"
-            VALUE "ProductName", "tap_aggs" "\0"
+            VALUE "OriginalFilename", "tap_egg.exe" "\0"
+            VALUE "ProductName", "tap_egg" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

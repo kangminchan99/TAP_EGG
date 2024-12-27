@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tap_aggs/controller/egg_controller.dart';
-import 'package:tap_aggs/screen/last_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:tap_egg/controller/egg_controller.dart';
+import 'package:tap_egg/screen/last_screen.dart';
+import 'package:tap_egg/service/admob_service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,6 +19,10 @@ class _MainScreenState extends State<MainScreen>
 
   final EggController eggController = Get.put(EggController());
 
+  BannerAd? _bannerAd;
+  late RewardedAd _rewardedAd;
+  bool _isAdLoaded = false;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +34,9 @@ class _MainScreenState extends State<MainScreen>
     _shakeAnimation = Tween<double>(begin: 0, end: 10)
         .chain(CurveTween(curve: Curves.elasticIn))
         .animate(_animationController);
+
+    _createBannerAd();
+    _loadRewardedAd();
   }
 
   @override
@@ -45,10 +54,60 @@ class _MainScreenState extends State<MainScreen>
     eggController.touchEgg();
   }
 
+  void _createBannerAd() {
+    _bannerAd = BannerAd(
+        size: AdSize.fullBanner,
+        adUnitId: AdmobService.bannerAdUnitId!,
+        listener: AdmobService.bannerAdListener,
+        request: const AdRequest())
+      ..load();
+  }
+
+  void _loadRewardedAd() {
+    RewardedAd.load(
+      adUnitId: AdmobService.rewardAdUnitId!, // 테스트 광고 ID
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (RewardedAd ad) {
+          setState(() {
+            _rewardedAd = ad;
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          debugPrint('RewardedAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  void _showRewardedAd() {
+    if (_isAdLoaded) {
+      _rewardedAd.show(
+          onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+        eggController.rewardedGet();
+      });
+
+      // 광고를 닫으면 다시 로드
+      _rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (Ad ad) {
+          ad.dispose();
+          _loadRewardedAd(); // 광고 재로드
+        },
+        onAdFailedToShowFullScreenContent: (Ad ad, AdError error) {
+          ad.dispose();
+          debugPrint('Ad failed to show: $error');
+        },
+      );
+    } else {
+      debugPrint('Ad not loaded');
+    }
+  }
+
   String getImageAsset() {
-    if (eggController.tapCount.value > 20) {
+    if (eggController.tapCount.value > 100000000) {
       return 'assets/images/last_egg.png';
-    } else if (eggController.tapCount.value > 10) {
+    } else if (eggController.tapCount.value > 50000000) {
       return 'assets/images/first_broken_egg.png';
     } else {
       return 'assets/images/clean_egg.png';
@@ -62,6 +121,19 @@ class _MainScreenState extends State<MainScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            if (_isAdLoaded) {
+              _showRewardedAd();
+            } else {
+              print('no ad');
+            }
+          },
+          icon: const Icon(
+            Icons.card_giftcard_sharp,
+            color: Colors.red,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -78,18 +150,21 @@ class _MainScreenState extends State<MainScreen>
             Obx(
               () => GestureDetector(
                 onTap: () {
-                  if (eggController.tapCount >= 21) {
-                    Get.to(() => LastScreen());
+                  if (eggController.tapCount >= 100000000) {
+                    Get.to(() => const LastScreen());
                   }
                 },
                 child: Text(
-                  eggController.tapCount < 21
+                  eggController.tapCount < 100000000
                       ? '${eggController.tapCount}'
-                      : 'GO',
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold),
+                      : 'Watch the video?',
+                  style: TextStyle(
+                    color: eggController.tapCount < 100000000
+                        ? Colors.black
+                        : Colors.red,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -119,6 +194,14 @@ class _MainScreenState extends State<MainScreen>
           ],
         ),
       ),
+      bottomNavigationBar: _bannerAd == null
+          ? Container()
+          : SizedBox(
+              height: 75,
+              child: AdWidget(
+                ad: _bannerAd!,
+              ),
+            ),
     );
   }
 }

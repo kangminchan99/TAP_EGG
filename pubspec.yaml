@@ -1,4 +1,4 @@
-name: tap_aggs
+name: tap_egg
 description: 'A new Flutter project.'
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -37,6 +37,7 @@ dependencies:
   get: ^4.6.6
   shared_preferences: ^2.3.4
   youtube_player_flutter: ^9.1.1
+  google_mobile_ads: ^5.2.0
 
 dev_dependencies:
   flutter_test:

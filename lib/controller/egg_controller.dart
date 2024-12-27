@@ -34,4 +34,10 @@ class EggController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('tapCount', 0);
   }
+
+  Future<void> rewardedGet() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('tapCount', tapCount.value + 10000);
+    tapCount.value = tapCount.value + 10000;
+  }
 }

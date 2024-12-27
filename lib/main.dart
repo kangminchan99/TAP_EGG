@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tap_aggs/screen/main_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:tap_egg/screen/main_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
