@@ -1,4 +1,4 @@
-package com.example.tap_egg
+package com.minchan.tap_egg
 
 import io.flutter.embedding.android.FlutterActivity
 

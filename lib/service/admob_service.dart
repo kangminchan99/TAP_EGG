@@ -8,9 +8,9 @@ class AdmobService {
   // 배너 광고
   static String? get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return Config.testBannerAosId;
+      return Config.bannerAosId;
     } else if (Platform.isIOS) {
-      return Config.testBannerIosId;
+      return Config.bannerIosId;
     }
     return null;
   }
@@ -18,9 +18,9 @@ class AdmobService {
   // 리워드  광고
   static String? get rewardAdUnitId {
     if (Platform.isAndroid) {
-      return Config.testRewardAosId;
+      return Config.rewardAosId;
     } else if (Platform.isIOS) {
-      return Config.testRewardIosId;
+      return Config.rewardIosId;
     }
     return null;
   }

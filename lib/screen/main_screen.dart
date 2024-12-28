@@ -193,7 +193,9 @@ class _MainScreenState extends State<MainScreen>
         ),
       ),
       bottomNavigationBar: _bannerAd == null
-          ? Container()
+          ? Container(
+              height: 75,
+            )
           : SizedBox(
               height: 75,
               child: AdWidget(
