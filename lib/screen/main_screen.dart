@@ -125,8 +125,6 @@ class _MainScreenState extends State<MainScreen>
           onPressed: () {
             if (_isAdLoaded) {
               _showRewardedAd();
-            } else {
-              print('no ad');
             }
           },
           icon: const Icon(

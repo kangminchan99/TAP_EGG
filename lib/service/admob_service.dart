@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:tap_egg/config/config.dart';
 
 class AdmobService {
   // 배너 광고
   static String? get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return Config.testBannerAosId;
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/2934735716';
+      return Config.testBannerIosId;
     }
     return null;
   }
@@ -17,9 +18,9 @@ class AdmobService {
   // 리워드  광고
   static String? get rewardAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/5224354917';
+      return Config.testRewardAosId;
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/1712485313';
+      return Config.testRewardIosId;
     }
     return null;
   }
