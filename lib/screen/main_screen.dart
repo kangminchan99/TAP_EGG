@@ -148,7 +148,7 @@ class _MainScreenState extends State<MainScreen>
             Obx(
               () => GestureDetector(
                 onTap: () {
-                  if (eggController.tapCount >= 100000000) {
+                  if (eggController.tapCount <= 100000000) {
                     Get.to(() => const LastScreen());
                   }
                 },
