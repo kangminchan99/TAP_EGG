@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:tap_egg/controller/egg_controller.dart';
@@ -20,8 +21,7 @@ class _MainScreenState extends State<MainScreen>
   final EggController eggController = Get.put(EggController());
 
   BannerAd? _bannerAd;
-  late RewardedAd _rewardedAd;
-  bool _isAdLoaded = false;
+  RewardedAd? _rewardedAd;
 
   @override
   void initState() {
@@ -68,39 +68,34 @@ class _MainScreenState extends State<MainScreen>
       adUnitId: AdmobService.rewardAdUnitId!, // 테스트 광고 ID
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
-        onAdLoaded: (RewardedAd ad) {
-          setState(() {
-            _rewardedAd = ad;
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          debugPrint('RewardedAd failed to load: $error');
-        },
+        onAdLoaded: (ad) => setState(() => _rewardedAd = ad),
+        onAdFailedToLoad: (error) => setState(() => _rewardedAd = null),
       ),
     );
   }
 
   void _showRewardedAd() {
-    if (_isAdLoaded) {
-      _rewardedAd.show(
-          onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
-        eggController.rewardedGet();
-      });
-
-      // 광고를 닫으면 다시 로드
-      _rewardedAd.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (Ad ad) {
+    if (_rewardedAd != null) {
+      _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
-          _loadRewardedAd(); // 광고 재로드
+          _loadRewardedAd();
         },
-        onAdFailedToShowFullScreenContent: (Ad ad, AdError error) {
+        onAdFailedToShowFullScreenContent: (ad, error) {
           ad.dispose();
-          debugPrint('Ad failed to show: $error');
+          _loadRewardedAd();
         },
       );
-    } else {
-      debugPrint('Ad not loaded');
+
+      _rewardedAd!.show(onUserEarnedReward: (ad, reward) {
+        try {
+          eggController.rewardedGet();
+        } catch (e) {
+          Fluttertoast.showToast(msg: "오류가 발생했습니다. 나중에 다시 시도해주세요!");
+        }
+      });
+
+      _rewardedAd = null;
     }
   }
 
@@ -123,8 +118,10 @@ class _MainScreenState extends State<MainScreen>
         centerTitle: true,
         leading: IconButton(
           onPressed: () {
-            if (_isAdLoaded) {
+            if (_rewardedAd != null) {
               _showRewardedAd();
+            } else {
+              Fluttertoast.showToast(msg: '아직 광고를 볼 수 없어요');
             }
           },
           icon: const Icon(
